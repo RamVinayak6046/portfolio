@@ -1,466 +1,205 @@
-/* ===============================
-   TYPING EFFECT
-================================ */
+/* ==========================================================================
+   PORTFOLIO SCRIPTS - RAM VINAYAK
+   Smooth micro-interactions: typing effect, scroll progress, scroll reveal.
+   ========================================================================== */
 
-const typing =
-    document.getElementById("typing");
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Scroll Reading Progress Bar
+    const progressBar = document.getElementById('progressBar');
+    const header = document.getElementById('header');
+    const backToTop = document.getElementById('backToTop');
+    let ticking = false;
 
+    function onScroll() {
+        const scrollY = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
 
-const words = [
-
-    "Java",
-    "HTML",
-    "MySQL",
-    "Software "
-
-];
-
-
-let wordIndex = 0;
-
-let charIndex = 0;
-
-let deleting = false;
-
-
-function typeEffect() {
-
-    const word =
-        words[wordIndex];
-
-
-    if (!deleting) {
-
-        typing.textContent =
-            word.substring(
-                0,
-                charIndex + 1
-            );
-
-        charIndex++;
-
-
-        if (
-            charIndex ===
-            word.length
-        ) {
-
-            deleting = true;
-
-            setTimeout(
-                typeEffect,
-                1200
-            );
-
-            return;
+        // Progress bar scale
+        if (progressBar) {
+            const progress = maxScroll > 0 ? scrollY / maxScroll : 0;
+            progressBar.style.transform = `scaleX(${progress})`;
         }
 
-    } else {
-
-        typing.textContent =
-            word.substring(
-                0,
-                charIndex - 1
-            );
-
-        charIndex--;
-
-
-        if (charIndex === 0) {
-
-            deleting = false;
-
-            wordIndex =
-                (wordIndex + 1)
-                % words.length;
+        // Header scrolled class
+        if (header) {
+            header.classList.toggle('scrolled', scrollY > 30);
         }
 
+        // Back to top button
+        if (backToTop) {
+            backToTop.classList.toggle('visible', scrollY > 400);
+        }
+
+        ticking = false;
     }
 
-
-    setTimeout(
-
-        typeEffect,
-
-        deleting
-            ? 45
-            : 85
-
-    );
-
-}
-
-
-
-/* ===============================
-   LIVE UPDATES
-================================ */
-
-const updates = [
-
-    {
-        date: "AUG 2026",
-
-        tag: "CERTIFICATION",
-
-        title:
-            "NPTEL Industrial IoT Completed",
-
-        text:
-            "Completed Introduction to Industry 4.0 Industrial IoT through NPTEL."
-    },
-
-
-   {
-    date: "2026",
-    tag: "CERTIFICATION",
-    title: "CCNA 1 Completed",
-    text: "Completed CCNA: Introduction to Networks through Cisco Networking Academy."
-},
-
-{
-    date: "2026",
-    tag: "CERTIFICATION",
-    title: "CCNA 2 / SRWE Completed",
-    text: "Completed Switching, Routing, and Wireless Essentials through Cisco Networking Academy."
-},
-
-
-    {
-        date: "2026",
-
-        tag: "INTERNSHIP",
-
-        title:
-            "Full Stack Java Internship Completed",
-
-        text:
-            "Completed a Full Stack Java Development internship at SCORWWO, Vijayawada."
-    },
-
-
-    {
-        date: "2026",
-
-        tag: "PROJECT",
-
-        title:
-            "Smart City Grievance System",
-
-        text:
-            "Built a PHP and MySQL based civic grievance management application."
-    }
-
-];
-
-
-const updatesGrid =
-    document.getElementById(
-        "updatesGrid"
-    );
-
-
-function loadUpdates() {
-
-    if (!updatesGrid) {
-
-        return;
-    }
-
-
-    updatesGrid.innerHTML = "";
-
-
-    updates.forEach(update => {
-
-
-        const card =
-            document.createElement(
-                "article"
-            );
-
-
-        card.className =
-            "update-card";
-
-
-        card.innerHTML = `
-
-            <div class="update-top">
-
-                <span class="update-tag">
-
-                    ${update.tag}
-
-                </span>
-
-
-                <span class="update-date">
-
-                    ${update.date}
-
-                </span>
-
-            </div>
-
-
-            <h3>
-
-                ${update.title}
-
-            </h3>
-
-
-            <p>
-
-                ${update.text}
-
-            </p>
-
-        `;
-
-
-        updatesGrid.appendChild(
-            card
-        );
-
-    });
-
-}
-
-
-
-/* ===============================
-   MOBILE MENU
-================================ */
-
-const menuBtn =
-    document.getElementById(
-        "menuBtn"
-    );
-
-
-const navLinks =
-    document.getElementById(
-        "navLinks"
-    );
-
-
-menuBtn.addEventListener(
-    "click",
-    () => {
-
-        navLinks.classList.toggle(
-            "open"
-        );
-
-
-        const icon =
-            menuBtn.querySelector(
-                "i"
-            );
-
-
-        icon.classList.toggle(
-            "fa-bars"
-        );
-
-
-        icon.classList.toggle(
-            "fa-xmark"
-        );
-
-    }
-);
-
-
-
-/* Close mobile menu */
-
-document
-    .querySelectorAll(
-        ".nav-links a"
-    )
-    .forEach(link => {
-
-        link.addEventListener(
-            "click",
-            () => {
-
-                navLinks.classList.remove(
-                    "open"
-                );
-
-
-                const icon =
-                    menuBtn.querySelector(
-                        "i"
-                    );
-
-
-                icon.classList.add(
-                    "fa-bars"
-                );
-
-
-                icon.classList.remove(
-                    "fa-xmark"
-                );
-
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            ticking = true;
+            window.requestAnimationFrame(onScroll);
+        }
+    }, { passive: true });
+    onScroll();
+
+    // 2. Typing Effect (Java prioritized as #1)
+    const typingElem = document.getElementById('typing');
+    if (typingElem) {
+        const words = [
+            'Java',
+            'Enterprise Backends',
+            'MySQL & Databases',
+            'Full Stack Systems'
+        ];
+
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+
+        function typeLoop() {
+            const currentWord = words[wordIndex];
+
+            if (isDeleting) {
+                typingElem.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typingElem.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
             }
-        );
 
-    });
+            let typeSpeed = isDeleting ? 45 : 85;
 
+            if (!isDeleting && charIndex === currentWord.length) {
+                typeSpeed = 1600; // Hold word
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                typeSpeed = 300; // Pause before new word
+            }
 
-
-/* ===============================
-   HEADER + ACTIVE NAV
-================================ */
-
-const header =
-    document.getElementById(
-        "header"
-    );
-
-
-const topBtn =
-    document.getElementById(
-        "topBtn"
-    );
-
-
-window.addEventListener(
-    "scroll",
-    () => {
-
-
-        /* Header */
-
-        if (
-            window.scrollY > 30
-        ) {
-
-            header.classList.add(
-                "scrolled"
-            );
-
-        } else {
-
-            header.classList.remove(
-                "scrolled"
-            );
-
+            setTimeout(typeLoop, typeSpeed);
         }
 
-
-
-        /* Back to top */
-
-        if (
-            window.scrollY > 500
-        ) {
-
-            topBtn.classList.add(
-                "show"
-            );
-
-        } else {
-
-            topBtn.classList.remove(
-                "show"
-            );
-
-        }
-
-
-
-        /* Active navigation */
-
-        let current =
-            "home";
-
-
-        document
-            .querySelectorAll(
-                "section[id]"
-            )
-            .forEach(section => {
-
-
-                const sectionTop =
-                    section.offsetTop
-                    - 150;
-
-
-                if (
-                    window.scrollY
-                    >= sectionTop
-                ) {
-
-                    current =
-                        section.id;
-
-                }
-
-            });
-
-
-
-        document
-            .querySelectorAll(
-                ".nav-links a"
-            )
-            .forEach(link => {
-
-
-                const target =
-                    link.getAttribute(
-                        "href"
-                    );
-
-
-                link.classList.toggle(
-
-                    "active",
-
-                    target ===
-                    `#${current}`
-
-                );
-
-            });
-
+        typeLoop();
     }
-);
 
-
-
-/* ===============================
-   BACK TO TOP
-================================ */
-
-topBtn.addEventListener(
-    "click",
-    () => {
-
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: "smooth"
-
+    // 3. Scroll Reveal Animations (IntersectionObserver)
+    const revealElements = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window && revealElements.length > 0) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.12,
+            rootMargin: '0px 0px -40px 0px'
         });
 
+        revealElements.forEach(el => revealObserver.observe(el));
+    } else {
+        // Fallback for older browsers
+        revealElements.forEach(el => el.classList.add('active'));
     }
-);
 
+    // 4. Active Navigation Link Highlighting (IntersectionObserver)
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"], .nav-link[href^="index.html#"]');
 
+    if ('IntersectionObserver' in window && sections.length > 0) {
+        const navObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        const href = link.getAttribute('href');
+                        const isMatch = href === `#${id}` || href === `index.html#${id}`;
+                        link.classList.toggle('active', isMatch);
+                    });
+                }
+            });
+        }, {
+            threshold: 0.25,
+            rootMargin: '-60px 0px -40% 0px'
+        });
 
-/* ===============================
-   INITIALIZE
-================================ */
+        sections.forEach(sec => navObserver.observe(sec));
+    }
 
-loadUpdates();
+    // 5. Mobile Menu Toggle
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navMenu = document.getElementById('navMenu');
 
-typeEffect();
+    if (mobileToggle && navMenu) {
+        const menuIcon = mobileToggle.querySelector('i');
+
+        function toggleMenu(forceClose) {
+            const willOpen = forceClose === undefined ? !navMenu.classList.contains('open') : !forceClose;
+            navMenu.classList.toggle('open', willOpen);
+            mobileToggle.setAttribute('aria-expanded', String(willOpen));
+            if (menuIcon) {
+                menuIcon.classList.toggle('fa-bars', !willOpen);
+                menuIcon.classList.toggle('fa-xmark', willOpen);
+            }
+        }
+
+        mobileToggle.addEventListener('click', () => toggleMenu());
+
+        navMenu.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => toggleMenu(true));
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && navMenu.classList.contains('open')) {
+                toggleMenu(true);
+            }
+        });
+    }
+
+    // 6. Back to Top Click
+    if (backToTop) {
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+
+    // 7. Contact Form Handling (Direct Mailto Dispatch)
+    const contactForm = document.getElementById('contactForm');
+    const formStatus = document.getElementById('formStatus');
+
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('senderName')?.value.trim();
+            const email = document.getElementById('senderEmail')?.value.trim();
+            const subject = document.getElementById('msgSubject')?.value.trim() || 'Software Engineering Inquiry';
+            const message = document.getElementById('msgBody')?.value.trim();
+
+            if (!name || !email || !message) {
+                if (formStatus) {
+                    formStatus.textContent = 'Please fill out all required fields (Name, Email, Message).';
+                    formStatus.style.color = '#f87171';
+                    formStatus.style.display = 'block';
+                }
+                return;
+            }
+
+            const bodyContent = `Name: ${name}\nEmail: ${email}\n\nMessage:\n${message}`;
+            const mailtoUrl = `mailto:vtu29562@veltech.edu.in?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(bodyContent)}`;
+
+            if (formStatus) {
+                formStatus.textContent = 'Launching your email client to send message to vtu29562@veltech.edu.in...';
+                formStatus.style.color = '#38bdf8';
+                formStatus.style.display = 'block';
+            }
+
+            window.location.href = mailtoUrl;
+        });
+    }
+});
